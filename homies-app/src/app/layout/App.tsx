@@ -4,15 +4,21 @@ import { Container } from "semantic-ui-react";
 import { IFood } from "../modules/food";
 import Navbar from "../../features/nav/Navbar";
 import FoodDashboard from "../../features/activities/dashboard/FoodDashboard";
+import agent from "../api/agent";
+import LoadingComponent from "./LoadingComponent";
 
 const App = () => {
   const [foods, setFoods] = useState<IFood[]>([]);
   const [selectedFood, setSelectedFood] = useState<IFood | null>(null);
   const [editMode, setEditMode] = useState(false);
 
+  const [loading, setLoading] = useState(true);
+
+  const [submitting, setSubmitting] = useState(false);
+
   const handleSelectFood = (id: string) => {
     setEditMode(false);
-    setSelectedFood(foods.filter(a => a.id === id)[0]);
+    setSelectedFood(foods.filter(a => a.Id === id)[0]);
   };
 
   const handleOpenCreateForm = () => {
@@ -21,24 +27,41 @@ const App = () => {
   };
 
   const handleCreateFood = (food: IFood) => {
-    setFoods([...foods, food]);
-    setSelectedFood(food);
-    setEditMode(false);
+    setSubmitting(true);
+    agent.Foods.create(food)
+      .then(() => {
+        setFoods([...foods, food]);
+        setSelectedFood(food);
+        setEditMode(false);
+      })
+      .then(() => {
+        setSubmitting(false);
+      });
   };
 
   const handleEditFood = (food: IFood) => {
-    setFoods([...foods.filter(a => a.id !== food.id), food]);
-    setSelectedFood(food);
-    setEditMode(false);
+    setSubmitting(true);
+    agent.Foods.update(food)
+      .then(() => {
+        setFoods([...foods.filter(a => a.Id !== food.Id), food]);
+        setSelectedFood(food);
+        setEditMode(false);
+      })
+      .then(() => {
+        setSubmitting(false);
+      });
   };
 
   useEffect(() => {
-    axios
-      .get<IFood[]>("http://homiesapi.tra-pp.com//api/Foods")
+    agent.Foods.list()
       .then(response => {
-        setFoods(response.data);
-      });
+        setFoods(response);
+      })
+      .then(() => setLoading(false));
   }, []);
+
+  if (loading)
+    return <LoadingComponent content="Loading Meals.." inverted={true} />;
 
   return (
     <Fragment>
@@ -54,6 +77,7 @@ const App = () => {
           setEditMode={setEditMode}
           createFood={handleCreateFood}
           editFood={handleEditFood}
+          submitting={submitting}
         ></FoodDashboard>
       </Container>
     </Fragment>

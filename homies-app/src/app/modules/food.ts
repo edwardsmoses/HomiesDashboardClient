@@ -1,7 +1,7 @@
 export interface IFood {
-  id: string;
-  name: string;
-  description: string;
+  Id: string;
+  Name: string;
+  Description: string;
   PriceInCurrency: string;
   Price: number;
   Currency: string;

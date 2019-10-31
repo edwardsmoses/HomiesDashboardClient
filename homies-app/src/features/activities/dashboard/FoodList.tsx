@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Button, Segment, Card, Icon, Label } from "semantic-ui-react";
+import { Button, Card, Icon, Label, Image } from "semantic-ui-react";
 
 import { IFood } from "../../../app/modules/food";
 
@@ -8,22 +8,23 @@ interface IProps {
   selectFood: (id: string) => void;
 }
 
-const FoodList: React.FC<IProps> = ({ foods, selectFood: selectFood }) => {
+const FoodList: React.FC<IProps> = ({ foods, selectFood }) => {
   return (
     <Card.Group>
       {foods.map(food => (
-        <Card
-          key={food.id}
-          image={food.FullPictureUrl}
-          header={food.name}
-          meta={food.CategoryName}
-          description={food.description}
-          extra={
+        <Card key={food.Id}>
+          <Image src={food.FullPictureUrl} wrapped ui={false} />
+          <Card.Content>
+            <Card.Header>{food.Name}</Card.Header>
+            <Card.Meta>{food.CategoryName}</Card.Meta>
+            <Card.Description>{food.Description}</Card.Description>
+          </Card.Content>
+          <Card.Content extra>
             <Fragment>
               <Label content={food.PriceInCurrency}></Label>
               <Button
                 animated
-                onClick={() => selectFood(food.id)}
+                onClick={() => selectFood(food.Id)}
                 floated="right"
                 primary
               >
@@ -33,8 +34,8 @@ const FoodList: React.FC<IProps> = ({ foods, selectFood: selectFood }) => {
                 </Button.Content>
               </Button>
             </Fragment>
-          }
-        />
+          </Card.Content>
+        </Card>
       ))}
     </Card.Group>
   );

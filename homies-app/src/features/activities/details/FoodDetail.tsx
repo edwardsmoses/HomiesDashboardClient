@@ -17,11 +17,11 @@ const FoodDetail: React.FC<IProps> = ({
     <Card fluid>
       <Image src={food.FullPictureUrl} wrapped ui={false} />
       <Card.Content>
-        <Card.Header>{food.name}</Card.Header>
+        <Card.Header>{food.Name}</Card.Header>
         <Card.Meta>
           <span>{food.PriceInCurrency}</span>
         </Card.Meta>
-        <Card.Description>{food.description}</Card.Description>
+        <Card.Description>{food.Description}</Card.Description>
       </Card.Content>
       <Card.Content extra>
         <Button.Group widths={2}>

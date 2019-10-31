@@ -8,23 +8,25 @@ interface IProps {
   food: IFood;
   createFood: (food: IFood) => void;
   editFood: (food: IFood) => void;
+  submitting: boolean;
 }
 
 const FoodForm: React.FC<IProps> = ({
   setEditMode,
   food: initFood,
   createFood,
-  editFood
+  editFood,
+  submitting
 }) => {
   const createMealForm = () => {
     if (initFood) {
       return initFood;
     } else {
       return {
-        id: "",
-        name: "",
+        Id: "",
+        Name: "",
         CategoryName: "",
-        description: "",
+        Description: "",
         Price: 0,
         PriceInCurrency: "",
         currency: "",
@@ -46,10 +48,10 @@ const FoodForm: React.FC<IProps> = ({
   };
 
   const handleSubmit = () => {
-    if (food.id.length === 0) {
+    if (food.Id.length === 0) {
       let newFood = {
         ...food,
-        id: uuid()
+        id: ""
       };
       createFood(newFood);
     } else {
@@ -62,9 +64,9 @@ const FoodForm: React.FC<IProps> = ({
       <Form onSubmit={handleSubmit}>
         <Form.Input
           onChange={handleInputChanges}
-          name="name"
+          name="Name"
           placeholder="Meal Name"
-          value={food.name}
+          value={food.Name}
         />
         <Form.Input
           onChange={handleInputChanges}
@@ -74,19 +76,20 @@ const FoodForm: React.FC<IProps> = ({
         />
         <Form.TextArea
           onChange={handleInputChanges}
-          name="description"
+          name="Description"
           placeholder="Description"
-          value={food.description}
+          value={(food.Description && food.Description) || ""}
         />
         <Form.Input
           onChange={handleInputChanges}
           name="Price"
-          placeholder="Price"
+          placeholder="Price (in naira)"
           type="number"
           value={food.Price}
         />
 
         <Button
+          loading={submitting}
           floated="right"
           positive
           type="submit"
