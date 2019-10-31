@@ -1,5 +1,4 @@
 import React, { useState, useEffect, Fragment } from "react";
-import axios from "axios";
 import { Container } from "semantic-ui-react";
 import { IFood } from "../modules/food";
 import Navbar from "../../features/nav/Navbar";

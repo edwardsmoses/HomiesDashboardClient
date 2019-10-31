@@ -1,7 +1,6 @@
 import React, { useState, FormEvent } from "react";
 import { Segment, Form, Button, Icon } from "semantic-ui-react";
 import { IFood } from "../../../app/modules/food";
-import { v4 as uuid } from "uuid";
 
 interface IProps {
   setEditMode: (editMode: boolean) => void;

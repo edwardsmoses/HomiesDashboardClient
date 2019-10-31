@@ -11,7 +11,7 @@ interface IProps {
 const FoodDetail: React.FC<IProps> = ({
   food,
   setEditMode,
-  setSelectedFood: setSelectedFood
+  setSelectedFood
 }) => {
   return (
     <Card fluid>
