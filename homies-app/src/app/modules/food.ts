@@ -3,7 +3,7 @@ export interface IFood {
   name: string;
   description: string;
   PriceInCurrency: string;
-  Price: string;
+  Price: number;
   Currency: string;
   CategoryName: string;
   PictureUrl: string;

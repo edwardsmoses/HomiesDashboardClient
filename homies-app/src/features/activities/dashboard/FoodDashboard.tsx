@@ -12,6 +12,8 @@ interface IProps {
   editMode: boolean;
   setEditMode: (editMode: boolean) => void;
   setSelectedFood: (activity: IFood | null) => void;
+  createFood: (food: IFood) => void;
+  editFood: (food: IFood) => void;
 }
 
 const FoodDashboard: React.FC<IProps> = ({
@@ -20,7 +22,9 @@ const FoodDashboard: React.FC<IProps> = ({
   selectedFood,
   editMode,
   setEditMode,
-  setSelectedFood
+  setSelectedFood,
+  createFood,
+  editFood
 }) => {
   return (
     <Grid>
@@ -35,7 +39,15 @@ const FoodDashboard: React.FC<IProps> = ({
             setSelectedFood={setSelectedFood}
           />
         )}
-        {editMode && <FoodForm setEditMode={setEditMode} />}
+        {editMode && (
+          <FoodForm
+            key={(selectedFood && selectedFood.id) || 0}
+            setEditMode={setEditMode}
+            food={selectedFood!}
+            createFood={createFood}
+            editFood={editFood}
+          />
+        )}
       </Grid.Column>
     </Grid>
   );
