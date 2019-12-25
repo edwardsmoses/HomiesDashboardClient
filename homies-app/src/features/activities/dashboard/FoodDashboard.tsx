@@ -1,54 +1,27 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Grid } from "semantic-ui-react";
-import { IFood } from "../../../app/modules/food";
 import FoodList from "./FoodList";
 import FoodDetail from "../details/FoodDetail";
 import FoodForm from "../form/FoodForm";
+import { observer } from "mobx-react-lite";
 
-interface IProps {
-  activities: IFood[];
-  selectFood: (id: string) => void;
-  selectedFood: IFood | null;
-  editMode: boolean;
-  setEditMode: (editMode: boolean) => void;
-  setSelectedFood: (activity: IFood | null) => void;
-  createFood: (food: IFood) => void;
-  editFood: (food: IFood) => void;
-  submitting: boolean;
-}
+import FoodStore from "../../../app/stores/foodStore";
 
-const FoodDashboard: React.FC<IProps> = ({
-  activities,
-  selectFood,
-  selectedFood,
-  editMode,
-  setEditMode,
-  setSelectedFood,
-  createFood,
-  editFood,
-  submitting
-}) => {
+const FoodDashboard: React.FC = () => {
+  const foodStore = useContext(FoodStore);
+
+  const { editMode, selectedMeal } = foodStore;
   return (
     <Grid>
       <Grid.Column width={10}>
-        <FoodList foods={activities} selectFood={selectFood}></FoodList>
+        <FoodList></FoodList>
       </Grid.Column>
       <Grid.Column width={6}>
-        {selectedFood && !editMode && (
-          <FoodDetail
-            food={selectedFood}
-            setEditMode={setEditMode}
-            setSelectedFood={setSelectedFood}
-          />
-        )}
+        {selectedMeal && !editMode && <FoodDetail />}
         {editMode && (
           <FoodForm
-            key={(selectedFood && selectedFood.Id) || 0}
-            setEditMode={setEditMode}
-            food={selectedFood!}
-            createFood={createFood}
-            submitting={submitting}
-            editFood={editFood}
+            key={(selectedMeal && selectedMeal.Id) || 0}
+            food={selectedMeal!}
           />
         )}
       </Grid.Column>
@@ -56,4 +29,4 @@ const FoodDashboard: React.FC<IProps> = ({
   );
 };
 
-export default FoodDashboard;
+export default observer(FoodDashboard);

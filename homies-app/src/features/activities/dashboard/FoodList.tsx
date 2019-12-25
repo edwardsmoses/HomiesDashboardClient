@@ -1,14 +1,14 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useContext } from "react";
 import { Button, Card, Icon, Label, Image } from "semantic-ui-react";
 
-import { IFood } from "../../../app/modules/food";
+import { observer } from "mobx-react-lite";
 
-interface IProps {
-  foods: IFood[];
-  selectFood: (id: string) => void;
-}
+import FoodStore from "../../../app/stores/foodStore";
 
-const FoodList: React.FC<IProps> = ({ foods, selectFood }) => {
+const FoodList: React.FC = () => {
+  const foodStore = useContext(FoodStore);
+  const { mealsByDate: foods, selectMeal } = foodStore;
+
   return (
     <Card.Group>
       {foods.map(food => (
@@ -24,7 +24,7 @@ const FoodList: React.FC<IProps> = ({ foods, selectFood }) => {
               <Label content={food.PriceInCurrency}></Label>
               <Button
                 animated
-                onClick={() => selectFood(food.Id)}
+                onClick={() => selectMeal(food.Id)}
                 floated="right"
                 primary
               >
@@ -41,4 +41,4 @@ const FoodList: React.FC<IProps> = ({ foods, selectFood }) => {
   );
 };
 
-export default FoodList;
+export default observer(FoodList);

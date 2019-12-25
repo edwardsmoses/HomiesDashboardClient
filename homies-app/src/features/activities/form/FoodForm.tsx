@@ -1,22 +1,18 @@
-import React, { useState, FormEvent } from "react";
+import React, { useState, FormEvent, useContext } from "react";
 import { Segment, Form, Button, Icon } from "semantic-ui-react";
 import { IFood } from "../../../app/modules/food";
 
+import FoodStore from "../../../app/stores/foodStore";
+import { observer } from "mobx-react-lite";
+
 interface IProps {
-  setEditMode: (editMode: boolean) => void;
   food: IFood;
-  createFood: (food: IFood) => void;
-  editFood: (food: IFood) => void;
-  submitting: boolean;
 }
 
-const FoodForm: React.FC<IProps> = ({
-  setEditMode,
-  food: initFood,
-  createFood,
-  editFood,
-  submitting
-}) => {
+const FoodForm: React.FC<IProps> = ({ food: initFood }) => {
+  const foodStore = useContext(FoodStore);
+  const { createMeal, editMeal, submitting, cancelFormOpen } = foodStore;
+
   const createMealForm = () => {
     if (initFood) {
       return initFood;
@@ -52,9 +48,9 @@ const FoodForm: React.FC<IProps> = ({
         ...food,
         id: ""
       };
-      createFood(newFood);
+      createMeal(newFood);
     } else {
-      editFood(food);
+      editMeal(food);
     }
   };
 
@@ -101,7 +97,7 @@ const FoodForm: React.FC<IProps> = ({
 
         <Button
           floated="right"
-          onClick={() => setEditMode(false)}
+          onClick={() => cancelFormOpen()}
           type="button"
           content="Cancel"
         />
@@ -110,4 +106,4 @@ const FoodForm: React.FC<IProps> = ({
   );
 };
 
-export default FoodForm;
+export default observer(FoodForm);

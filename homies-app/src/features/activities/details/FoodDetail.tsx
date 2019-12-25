@@ -1,38 +1,33 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Card, Image, Button } from "semantic-ui-react";
-import { IFood } from "../../../app/modules/food";
 
-interface IProps {
-  food: IFood;
-  setEditMode: (editMode: boolean) => void;
-  setSelectedFood: (food: IFood | null) => void;
-}
+import FoodStore from "../../../app/stores/foodStore";
+import { observer } from "mobx-react-lite";
 
-const FoodDetail: React.FC<IProps> = ({
-  food,
-  setEditMode,
-  setSelectedFood
-}) => {
+const FoodDetail: React.FC = () => {
+  const foodStore = useContext(FoodStore);
+  const { selectedMeal: food, openEditForm, cancelSeletectedMeal } = foodStore;
+
   return (
     <Card fluid>
-      <Image src={food.FullPictureUrl} wrapped ui={false} />
+      <Image src={food!.FullPictureUrl} wrapped ui={false} />
       <Card.Content>
-        <Card.Header>{food.Name}</Card.Header>
+        <Card.Header>{food!.Name}</Card.Header>
         <Card.Meta>
-          <span>{food.PriceInCurrency}</span>
+          <span>{food!.PriceInCurrency}</span>
         </Card.Meta>
-        <Card.Description>{food.Description}</Card.Description>
+        <Card.Description>{food!.Description}</Card.Description>
       </Card.Content>
       <Card.Content extra>
         <Button.Group widths={2}>
           <Button
-            onClick={() => setEditMode(true)}
+            onClick={() => openEditForm(food!.Id)}
             basic
             color="blue"
             content="Edit"
           />
           <Button
-            onClick={() => setSelectedFood(null)}
+            onClick={() => cancelSeletectedMeal()}
             basic
             color="grey"
             content="Cancel"
@@ -43,4 +38,4 @@ const FoodDetail: React.FC<IProps> = ({
   );
 };
 
-export default FoodDetail;
+export default observer(FoodDetail);
