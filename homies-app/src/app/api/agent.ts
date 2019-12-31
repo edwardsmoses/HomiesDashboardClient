@@ -14,10 +14,10 @@ const requests = {
 
 const Foods = {
   list: (): Promise<IFood[]> => requests.get("/foods"),
-  details: (id: string) => requests.get(`/foods${id}`),
+  details: (id: string) => requests.get(`/foods/${id}`),
   create: (food: IFood) => requests.post("/foods", food),
   update: (food: IFood) => requests.put(`/foods/${food.Id}`, food),
-  delete: (id: string) => requests.delete(`/activities/${id}`)
+  delete: (id: string) => requests.delete(`/foods/${id}`)
 };
 
 export default {

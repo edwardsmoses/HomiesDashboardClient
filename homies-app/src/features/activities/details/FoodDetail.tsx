@@ -1,16 +1,32 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Card, Image, Button } from "semantic-ui-react";
 
 import FoodStore from "../../../app/stores/foodStore";
 import { observer } from "mobx-react-lite";
+import { RouteComponentProps, Link } from "react-router-dom";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
 
-const FoodDetail: React.FC = () => {
+interface DetailParams {
+  id: string;
+}
+
+const FoodDetail: React.FC<RouteComponentProps<DetailParams>> = ({
+  match,
+  history
+}) => {
   const foodStore = useContext(FoodStore);
-  const { selectedMeal: food, openEditForm, cancelSeletectedMeal } = foodStore;
+  const { mealDetail: food, viewMealDetail, loadingInitial } = foodStore;
+
+  useEffect(() => {
+    viewMealDetail(match.params.id);
+  }, [viewMealDetail, match.params.id]);
+
+  if (loadingInitial || !food)
+    return <LoadingComponent content="Loading Meal.."></LoadingComponent>;
 
   return (
     <Card fluid>
-      <Image src={food!.FullPictureUrl} wrapped ui={false} />
+      <Image src={food!.FullPictureUrl} wrapped ui={false} widths={3} />
       <Card.Content>
         <Card.Header>{food!.Name}</Card.Header>
         <Card.Meta>
@@ -21,13 +37,14 @@ const FoodDetail: React.FC = () => {
       <Card.Content extra>
         <Button.Group widths={2}>
           <Button
-            onClick={() => openEditForm(food!.Id)}
+            as={Link}
+            to={`/editMeal/${food.Id}`}
             basic
             color="blue"
             content="Edit"
           />
           <Button
-            onClick={() => cancelSeletectedMeal()}
+            onClick={() => history.push("/meals")}
             basic
             color="grey"
             content="Cancel"

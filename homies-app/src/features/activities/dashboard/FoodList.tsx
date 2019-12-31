@@ -4,10 +4,11 @@ import { Button, Card, Icon, Label, Image } from "semantic-ui-react";
 import { observer } from "mobx-react-lite";
 
 import FoodStore from "../../../app/stores/foodStore";
+import { Link } from "react-router-dom";
 
 const FoodList: React.FC = () => {
   const foodStore = useContext(FoodStore);
-  const { mealsByDate: foods, selectMeal } = foodStore;
+  const { mealsByDate: foods } = foodStore;
 
   return (
     <Card.Group>
@@ -24,7 +25,8 @@ const FoodList: React.FC = () => {
               <Label content={food.PriceInCurrency}></Label>
               <Button
                 animated
-                onClick={() => selectMeal(food.Id)}
+                as={Link}
+                to={`/meals/${food.Id}`}
                 floated="right"
                 primary
               >

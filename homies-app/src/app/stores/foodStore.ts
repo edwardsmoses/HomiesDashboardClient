@@ -8,11 +8,9 @@ configure({ enforceActions: "always" });
 export class FoodStore {
   @observable mealRegistry = new Map();
 
-  @observable meals: IFood[] = [];
-  @observable selectedMeal: IFood | undefined;
+  @observable mealDetail: IFood | null = null;
 
   @observable loadingInitial = false;
-  @observable editMode = false;
 
   @observable submitting = false;
 
@@ -45,6 +43,40 @@ export class FoodStore {
     }
   };
 
+  @action viewMealDetail = async (id: string) => {
+    let meal = this.getMeal(id);
+    if (meal) {
+      this.mealDetail = meal;
+    } else {
+      this.loadingInitial = true;
+
+      try {
+        //get the food detail
+        meal = await agent.Foods.details(id);
+
+        runInAction("mealDetail", () => {
+          this.mealDetail = meal;
+          this.loadingInitial = false;
+        });
+      } catch (error) {
+        console.log(error);
+
+        runInAction("mealDetailError", () => {
+          this.loadingInitial = false;
+        });
+      }
+    }
+  };
+
+  @action clearMealDetail = () => {
+    this.mealDetail = null;
+  };
+
+  //helper method to get the meal detail from the Observable Map
+  getMeal = (id: string) => {
+    return this.mealRegistry.get(id);
+  };
+
   @action createMeal = async (food: IFood) => {
     this.submitting = true;
 
@@ -53,7 +85,6 @@ export class FoodStore {
 
       runInAction("create Meal", () => {
         this.mealRegistry.set(food.Id, food);
-        this.editMode = false;
         this.submitting = false;
       });
     } catch (error) {
@@ -73,9 +104,8 @@ export class FoodStore {
 
       runInAction("editing Meals", () => {
         this.mealRegistry.set(food.Id, food);
-        this.selectedMeal = food;
+        this.mealDetail = food;
 
-        this.editMode = false;
         this.submitting = false;
       });
     } catch (error) {
@@ -87,27 +117,12 @@ export class FoodStore {
     }
   };
 
-  @action openCreateForm = () => {
-    this.editMode = true;
-    this.selectedMeal = undefined;
-  };
-
-  @action openEditForm = (id: string) => {
-    this.selectedMeal = this.mealRegistry.get(id);
-    this.editMode = true;
-  };
-
   @action cancelSeletectedMeal = () => {
-    this.selectedMeal = undefined;
-  };
-
-  @action cancelFormOpen = () => {
-    this.editMode = false;
+    this.mealDetail = null;
   };
 
   @action selectMeal = (id: string) => {
-    this.selectedMeal = this.mealRegistry.get(id);
-    this.editMode = false;
+    this.mealDetail = this.mealRegistry.get(id);
   };
 }
 

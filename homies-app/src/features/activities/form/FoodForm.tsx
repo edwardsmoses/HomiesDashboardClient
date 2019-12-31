@@ -1,39 +1,59 @@
-import React, { useState, FormEvent, useContext } from "react";
+import React, { useState, FormEvent, useContext, useEffect } from "react";
 import { Segment, Form, Button, Icon } from "semantic-ui-react";
 import { IFood } from "../../../app/modules/food";
 
 import FoodStore from "../../../app/stores/foodStore";
 import { observer } from "mobx-react-lite";
+import { RouteComponentProps } from "react-router-dom";
 
-interface IProps {
-  food: IFood;
+interface DetailParams {
+  id: string;
 }
 
-const FoodForm: React.FC<IProps> = ({ food: initFood }) => {
+const FoodForm: React.FC<RouteComponentProps<DetailParams>> = ({
+  match,
+  history
+}) => {
   const foodStore = useContext(FoodStore);
-  const { createMeal, editMeal, submitting, cancelFormOpen } = foodStore;
+  const {
+    createMeal,
+    editMeal,
+    submitting,
+    mealDetail: initFood,
+    viewMealDetail,
+    clearMealDetail
+  } = foodStore;
 
-  const createMealForm = () => {
-    if (initFood) {
-      return initFood;
-    } else {
-      return {
-        Id: "",
-        Name: "",
-        CategoryName: "",
-        Description: "",
-        Price: 0,
-        PriceInCurrency: "",
-        currency: "",
-        PictureUrl: "",
-        FullPictureUrl: "",
-        Pictures: [],
-        Currency: ""
-      };
+  const [food, setFood] = useState<IFood>({
+    Id: "",
+    Name: "",
+    CategoryName: "",
+    Description: "",
+    Price: 0,
+    PriceInCurrency: "",
+    PictureUrl: "",
+    FullPictureUrl: "",
+    Pictures: [],
+    Currency: ""
+  });
+
+  useEffect(() => {
+    if (match.params.id && food.Id.length === 0) {
+      viewMealDetail(match.params.id).then(() => {
+        initFood && setFood(initFood);
+      });
     }
-  };
 
-  const [food, setFood] = useState<IFood>(createMealForm);
+    return () => {
+      clearMealDetail();
+    };
+  }, [
+    viewMealDetail,
+    clearMealDetail,
+    match.params.id,
+    initFood,
+    food.Id.length
+  ]);
 
   const handleInputChanges = (
     event: FormEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -48,9 +68,9 @@ const FoodForm: React.FC<IProps> = ({ food: initFood }) => {
         ...food,
         id: ""
       };
-      createMeal(newFood);
+      createMeal(newFood).then(() => history.push(`/meals/${newFood.Id}`));
     } else {
-      editMeal(food);
+      editMeal(food).then(() => history.push(`/meals/${food.Id}`));
     }
   };
 
@@ -97,7 +117,7 @@ const FoodForm: React.FC<IProps> = ({ food: initFood }) => {
 
         <Button
           floated="right"
-          onClick={() => cancelFormOpen()}
+          onClick={() => history.push("/meals")}
           type="button"
           content="Cancel"
         />

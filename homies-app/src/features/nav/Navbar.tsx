@@ -1,16 +1,14 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Menu, Container, Button } from "semantic-ui-react";
 
-import FoodStore from "../../app/stores/foodStore";
 import { observer } from "mobx-react-lite";
+import { NavLink } from "react-router-dom";
 
 const Navbar: React.FC = () => {
-  const foodStore = useContext(FoodStore);
-
   return (
     <Menu fixed="top" inverted>
       <Container>
-        <Menu.Item header>
+        <Menu.Item header as={NavLink} to="/" exact>
           <img
             src="/assets/img/icon.png"
             alt="logo"
@@ -18,13 +16,9 @@ const Navbar: React.FC = () => {
           />
           Homies
         </Menu.Item>
-        <Menu.Item name="Meals" />
-        <Menu.Item>
-          <Button
-            positive
-            content="Create New Meal"
-            onClick={foodStore.openCreateForm}
-          />
+        <Menu.Item name="Meals" as={NavLink} to="/meals" />
+        <Menu.Item as={NavLink} to="/createMeal">
+          <Button positive content="Create New Meal" />
         </Menu.Item>
       </Container>
     </Menu>

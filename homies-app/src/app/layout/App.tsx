@@ -1,32 +1,40 @@
-import React, { useEffect, Fragment, useContext } from "react";
+import React, { Fragment } from "react";
 import { Container } from "semantic-ui-react";
 import Navbar from "../../features/nav/Navbar";
 import FoodDashboard from "../../features/activities/dashboard/FoodDashboard";
-import LoadingComponent from "./LoadingComponent";
 
 import { observer } from "mobx-react-lite";
 
-import FoodStore from "../stores/foodStore";
+import { Route, withRouter, RouteComponentProps } from "react-router-dom";
+import { homepage } from "../../features/home/homepage";
+import FoodForm from "../../features/activities/form/FoodForm";
+import FoodDetail from "../../features/activities/details/FoodDetail";
 
-const App = () => {
-  const foodStore = useContext(FoodStore);
-
-  useEffect(() => {
-    foodStore.loadMeals();
-  }, [foodStore]);
-
-  if (foodStore.loadingInitial)
-    return <LoadingComponent content="Loading Meals.." inverted={true} />;
-
+const App: React.FC<RouteComponentProps> = ({ location }) => {
   return (
     <Fragment>
-      <Navbar />
+      <Route exact path="/" component={homepage} />
+      <Route
+        path={"/(.+)"}
+        render={() => (
+          <Fragment>
+            <Navbar />
 
-      <Container style={{ marginTop: "7em" }}>
-        <FoodDashboard />
-      </Container>
+            <Container style={{ marginTop: "7em" }}>
+              <Route path="/meals" exact component={FoodDashboard}></Route>
+              <Route path="/meals/:id" exact component={FoodDetail}></Route>
+
+              <Route
+                key={location.key}
+                path={["/createMeal", "/editMeal/:id"]}
+                component={FoodForm}
+              ></Route>
+            </Container>
+          </Fragment>
+        )}
+      />
     </Fragment>
   );
 };
 
-export default observer(App);
+export default withRouter(observer(App));
