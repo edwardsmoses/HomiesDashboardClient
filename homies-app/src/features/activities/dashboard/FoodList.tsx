@@ -1,45 +1,36 @@
-import React, { Fragment, useContext } from "react";
-import { Button, Card, Icon, Label, Image } from "semantic-ui-react";
+import React, { useContext, Fragment } from "react";
 
 import { observer } from "mobx-react-lite";
 
 import FoodStore from "../../../app/stores/foodStore";
-import { Link } from "react-router-dom";
+import { FoodListItem } from "./FoodListItem";
+
+import { Card, Divider, Header, Icon } from "semantic-ui-react";
 
 const FoodList: React.FC = () => {
   const foodStore = useContext(FoodStore);
-  const { mealsByDate: foods } = foodStore;
+  const { mealsByCategory: foods } = foodStore;
 
   return (
-    <Card.Group>
-      {foods.map(food => (
-        <Card key={food.Id}>
-          <Image src={food.FullPictureUrl} wrapped ui={false} />
-          <Card.Content>
-            <Card.Header>{food.Name}</Card.Header>
-            <Card.Meta>{food.CategoryName}</Card.Meta>
-            <Card.Description>{food.Description}</Card.Description>
-          </Card.Content>
-          <Card.Content extra>
-            <Fragment>
-              <Label content={food.PriceInCurrency}></Label>
-              <Button
-                animated
-                as={Link}
-                to={`/meals/${food.Id}`}
-                floated="right"
-                primary
-              >
-                <Button.Content visible>View Meal</Button.Content>
-                <Button.Content hidden>
-                  <Icon name="arrow right" />
-                </Button.Content>
-              </Button>
-            </Fragment>
-          </Card.Content>
-        </Card>
+    <Fragment>
+      {foods.map(([group, meals]) => (
+        <Fragment key={group}>
+          <Divider hidden></Divider>
+
+          <Divider horizontal style={{ marginTop: 30, marginBottom: 30 }}>
+            <Header as="h4">
+              <Icon name="cubes" />
+              {group.toUpperCase()}
+            </Header>
+          </Divider>
+          <Card.Group>
+            {meals.map(food => (
+              <FoodListItem food={food} key={food.Id} />
+            ))}
+          </Card.Group>
+        </Fragment>
       ))}
-    </Card.Group>
+    </Fragment>
   );
 };
 

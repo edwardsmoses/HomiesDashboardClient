@@ -5,3 +5,25 @@ body {
 .ui.inverted.top.fixed.menu {
   background-image: linear-gradient(to left, #000000, #0f9b0f) !important;
 }
+
+.masthead {
+  display: flex;
+  align-items: center;
+  background-image: linear-gradient(to left, #000000, #0f9b0f) !important;
+  height: 100vh;
+}
+
+.masthead .ui.menu .ui.button,
+.ui.menu a.ui.inverted.button {
+  margin-left: 0.5em;
+}
+
+.masthead h1.ui.header {
+  font-size: 4em;
+  font-weight: normal;
+}
+
+.masthead h2 {
+  font-size: 1.7em;
+  font-weight: normal;
+}

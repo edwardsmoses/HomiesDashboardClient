@@ -14,10 +14,30 @@ export class FoodStore {
 
   @observable submitting = false;
 
-  @computed get mealsByDate() {
-    return Array.from(this.mealRegistry.values()).sort(
-      (a, b) => a.Price - b.Price
+  @computed get mealsByCategory() {
+    return this.groupMealsByCategory(Array.from(this.mealRegistry.values()));
+  }
+
+  groupMealsByCategory(meals: IFood[]) {
+    const sortedMeals = meals.sort((a, b) =>
+      this.SortCategoryNames(a.CategoryName, b.CategoryName)
     );
+    return Object.entries(
+      sortedMeals.reduce((meals, meal) => {
+        const CategoryName = meal.CategoryName;
+        meals[CategoryName] = meals[CategoryName]
+          ? [...meals[CategoryName], meal]
+          : [meal];
+        return meals;
+      }, {} as { [key: string]: IFood[] })
+    );
+  }
+
+  SortCategoryNames(a: string, b: string) {
+    a = a.toLowerCase();
+    b = b.toLowerCase();
+
+    return a > b ? -1 : b > a ? 1 : 0;
   }
 
   @action loadMeals = async () => {
@@ -33,6 +53,8 @@ export class FoodStore {
         });
         this.loadingInitial = false;
       });
+
+      console.log(this.groupMealsByCategory(foods));
     } catch (error) {
       //log the error.
       console.log(error);

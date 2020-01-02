@@ -15,7 +15,7 @@ const FoodDashboard: React.FC = () => {
   }, [foodStore]);
 
   if (foodStore.loadingInitial)
-    return <LoadingComponent content="Loading Meals.." inverted={true} />;
+    return <LoadingComponent content="Loading Meals.." />;
 
   return (
     <Grid>

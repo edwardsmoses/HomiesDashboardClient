@@ -1,19 +1,20 @@
 import React, { useContext, useEffect } from "react";
-import { Card, Image, Button } from "semantic-ui-react";
+import { Grid } from "semantic-ui-react";
 
 import FoodStore from "../../../app/stores/foodStore";
 import { observer } from "mobx-react-lite";
-import { RouteComponentProps, Link } from "react-router-dom";
+import { RouteComponentProps } from "react-router-dom";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
+import FoodDetailedHeader from "./FoodDetailedHeader";
+import { FoodDetailedInfo } from "./FoodDetailedInfo";
+import { FoodDetailedPictures } from "./FoodDetailedPictures";
+import { FoodDetailedSidebar } from "./FoodDetailedSidebar";
 
 interface DetailParams {
   id: string;
 }
 
-const FoodDetail: React.FC<RouteComponentProps<DetailParams>> = ({
-  match,
-  history
-}) => {
+const FoodDetail: React.FC<RouteComponentProps<DetailParams>> = ({ match }) => {
   const foodStore = useContext(FoodStore);
   const { mealDetail: food, viewMealDetail, loadingInitial } = foodStore;
 
@@ -25,33 +26,16 @@ const FoodDetail: React.FC<RouteComponentProps<DetailParams>> = ({
     return <LoadingComponent content="Loading Meal.."></LoadingComponent>;
 
   return (
-    <Card fluid>
-      <Image src={food!.FullPictureUrl} wrapped ui={false} widths={3} />
-      <Card.Content>
-        <Card.Header>{food!.Name}</Card.Header>
-        <Card.Meta>
-          <span>{food!.PriceInCurrency}</span>
-        </Card.Meta>
-        <Card.Description>{food!.Description}</Card.Description>
-      </Card.Content>
-      <Card.Content extra>
-        <Button.Group widths={2}>
-          <Button
-            as={Link}
-            to={`/editMeal/${food.Id}`}
-            basic
-            color="blue"
-            content="Edit"
-          />
-          <Button
-            onClick={() => history.push("/meals")}
-            basic
-            color="grey"
-            content="Cancel"
-          />
-        </Button.Group>
-      </Card.Content>
-    </Card>
+    <Grid>
+      <Grid.Column width={10}>
+        <FoodDetailedHeader meal={food}></FoodDetailedHeader>
+        <FoodDetailedInfo meal={food}></FoodDetailedInfo>
+        <FoodDetailedPictures meal={food}></FoodDetailedPictures>
+      </Grid.Column>
+      <Grid.Column width={6}>
+        <FoodDetailedSidebar></FoodDetailedSidebar>
+      </Grid.Column>
+    </Grid>
   );
 };
 

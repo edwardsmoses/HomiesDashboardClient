@@ -1,5 +1,5 @@
 import React, { useState, FormEvent, useContext, useEffect } from "react";
-import { Segment, Form, Button, Icon } from "semantic-ui-react";
+import { Segment, Form, Button, Icon, Grid } from "semantic-ui-react";
 import { IFood } from "../../../app/modules/food";
 
 import FoodStore from "../../../app/stores/foodStore";
@@ -75,54 +75,58 @@ const FoodForm: React.FC<RouteComponentProps<DetailParams>> = ({
   };
 
   return (
-    <Segment clearing>
-      <Form onSubmit={handleSubmit}>
-        <Form.Input
-          onChange={handleInputChanges}
-          name="Name"
-          placeholder="Meal Name"
-          value={food.Name}
-        />
-        <Form.Input
-          onChange={handleInputChanges}
-          name="CategoryName"
-          placeholder="Category"
-          value={food.CategoryName}
-        />
-        <Form.TextArea
-          onChange={handleInputChanges}
-          name="Description"
-          placeholder="Description"
-          value={(food.Description && food.Description) || ""}
-        />
-        <Form.Input
-          onChange={handleInputChanges}
-          name="Price"
-          placeholder="Price (in naira)"
-          type="number"
-          value={food.Price}
-        />
+    <Grid>
+      <Grid.Column width={10}>
+        <Segment clearing>
+          <Form onSubmit={handleSubmit}>
+            <Form.Input
+              onChange={handleInputChanges}
+              name="Name"
+              placeholder="Meal Name"
+              value={food.Name}
+            />
+            <Form.Input
+              onChange={handleInputChanges}
+              name="CategoryName"
+              placeholder="Category"
+              value={food.CategoryName}
+            />
+            <Form.TextArea
+              onChange={handleInputChanges}
+              name="Description"
+              placeholder="Description"
+              value={(food.Description && food.Description) || ""}
+            />
+            <Form.Input
+              onChange={handleInputChanges}
+              name="Price"
+              placeholder="Price (in naira)"
+              type="number"
+              value={food.Price}
+            />
 
-        <Button
-          loading={submitting}
-          floated="right"
-          positive
-          type="submit"
-          icon
-          labelPosition="right"
-        >
-          Save Meal
-          <Icon name="arrow right"></Icon>
-        </Button>
+            <Button
+              loading={submitting}
+              floated="right"
+              positive
+              type="submit"
+              icon
+              labelPosition="right"
+            >
+              Save Meal
+              <Icon name="arrow right"></Icon>
+            </Button>
 
-        <Button
-          floated="right"
-          onClick={() => history.push("/meals")}
-          type="button"
-          content="Cancel"
-        />
-      </Form>
-    </Segment>
+            <Button
+              floated="right"
+              onClick={() => history.push("/meals")}
+              type="button"
+              content="Cancel"
+            />
+          </Form>
+        </Segment>
+      </Grid.Column>
+    </Grid>
   );
 };
 
