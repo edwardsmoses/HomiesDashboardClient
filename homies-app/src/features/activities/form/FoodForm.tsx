@@ -2,6 +2,8 @@ import React, { useState, FormEvent, useContext, useEffect } from "react";
 import { Segment, Form, Button, Icon, Grid } from "semantic-ui-react";
 import { IFood } from "../../../app/modules/food";
 
+import { v4 as uuid } from "uuid";
+
 import FoodStore from "../../../app/stores/foodStore";
 import { observer } from "mobx-react-lite";
 import { RouteComponentProps } from "react-router-dom";
@@ -66,7 +68,7 @@ const FoodForm: React.FC<RouteComponentProps<DetailParams>> = ({
     if (food.Id.length === 0) {
       let newFood = {
         ...food,
-        id: ""
+        Id: uuid()
       };
       createMeal(newFood).then(() => history.push(`/meals/${newFood.Id}`));
     } else {
@@ -85,12 +87,16 @@ const FoodForm: React.FC<RouteComponentProps<DetailParams>> = ({
               placeholder="Meal Name"
               value={food.Name}
             />
-            <Form.Input
-              onChange={handleInputChanges}
-              name="CategoryName"
-              placeholder="Category"
-              value={food.CategoryName}
-            />
+            {/* only show category name when in create mode */}
+            {food.Id.length === 0 && (
+              <Form.Input
+                onChange={handleInputChanges}
+                name="CategoryName"
+                placeholder="Category"
+                value={food.CategoryName}
+              />
+            )}
+
             <Form.TextArea
               onChange={handleInputChanges}
               name="Description"
@@ -104,7 +110,6 @@ const FoodForm: React.FC<RouteComponentProps<DetailParams>> = ({
               type="number"
               value={food.Price}
             />
-
             <Button
               loading={submitting}
               floated="right"
@@ -116,7 +121,6 @@ const FoodForm: React.FC<RouteComponentProps<DetailParams>> = ({
               Save Meal
               <Icon name="arrow right"></Icon>
             </Button>
-
             <Button
               floated="right"
               onClick={() => history.push("/meals")}

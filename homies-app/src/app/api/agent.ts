@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import { IFood } from "../modules/food";
 
-axios.defaults.baseURL = "http://homiesapi.tra-pp.com/api";
+axios.defaults.baseURL = "http://localhost:62127/api";
 
 const responseBody = (response: AxiosResponse) => response.data;
 
@@ -13,10 +13,10 @@ const requests = {
 };
 
 const Foods = {
-  list: (): Promise<IFood[]> => requests.get("/foods"),
-  details: (id: string) => requests.get(`/foods/${id}`),
-  create: (food: IFood) => requests.post("/foods", food),
-  update: (food: IFood) => requests.put(`/foods/${food.Id}`, food)
+  list: (): Promise<IFood[]> => requests.get("/meals"),
+  details: (id: string) => requests.get(`/meals/${id}`),
+  create: (food: IFood) => requests.post("/meals", food),
+  update: (food: IFood) => requests.put(`/meals/${food.Id}`, food)
 };
 
 export default {
