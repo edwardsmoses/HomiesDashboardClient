@@ -22,8 +22,10 @@ const FoodDetail: React.FC<RouteComponentProps<DetailParams>> = ({ match }) => {
     viewMealDetail(match.params.id);
   }, [viewMealDetail, match.params.id]);
 
-  if (loadingInitial || !food)
+  if (loadingInitial)
     return <LoadingComponent content="Loading Meal.."></LoadingComponent>;
+
+  if (!food) return <h2>Not Found</h2>;
 
   return (
     <Grid>

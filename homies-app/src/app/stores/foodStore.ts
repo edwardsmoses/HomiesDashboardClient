@@ -53,8 +53,6 @@ export class FoodStore {
         });
         this.loadingInitial = false;
       });
-
-      console.log(this.groupMealsByCategory(foods));
     } catch (error) {
       //log the error.
       console.log(error);
@@ -81,11 +79,10 @@ export class FoodStore {
           this.loadingInitial = false;
         });
       } catch (error) {
-        console.log(error);
-
         runInAction("mealDetailError", () => {
           this.loadingInitial = false;
         });
+        console.log(error);
       }
     }
   };

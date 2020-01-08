@@ -10,16 +10,15 @@ export const FoodListItem: React.FC<{ food: IFood }> = ({ food }) => {
       <Image
         size="tiny"
         circular
+        as={Link}
+        to={`/meals/${food.Id}`}
         src={food.FullPictureUrl}
         wrapped
         ui={false}
       />
       <Card.Content>
         <Card.Header>{food.Name}</Card.Header>
-        <Card.Meta>
-          <Icon name="cube"></Icon>
-          {food.CategoryName}
-        </Card.Meta>
+        <Card.Meta>{food.CategoryName}</Card.Meta>
         <Card.Description>
           <Icon name="info circle"></Icon>
           {food.Description}
@@ -33,7 +32,7 @@ export const FoodListItem: React.FC<{ food: IFood }> = ({ food }) => {
             as={Link}
             to={`/meals/${food.Id}`}
             floated="right"
-            primary
+            color="green"
           >
             <Button.Content visible>View Meal</Button.Content>
             <Button.Content hidden>
