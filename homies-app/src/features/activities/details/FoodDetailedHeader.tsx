@@ -2,6 +2,7 @@ import React from "react";
 import { Segment, Image, Item, Header, Button } from "semantic-ui-react";
 import { IFood } from "../../../app/modules/food";
 import { observer } from "mobx-react-lite";
+import { Link } from "react-router-dom";
 
 const activityImageStyle = {
   filter: "brightness(30%)"
@@ -42,7 +43,7 @@ const FoodDetailedHeader: React.FC<{ meal: IFood }> = ({ meal }) => {
       <Segment clearing attached="bottom">
         <Button color="green">Create New Order</Button>
         <Button>View Orders</Button>
-        <Button color="facebook" floated="right">
+        <Button color="facebook" floated="right" as={Link} to={`/editMeal/${meal.Id}`}>
           Manage Meal
         </Button>
       </Segment>
