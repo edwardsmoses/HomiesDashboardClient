@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import { IFood } from "../modules/food";
 import { history } from "../..";
 import { toast } from "react-toastify";
+import { IFoodCategory } from "../modules/foodCategory";
 
 axios.defaults.baseURL = "http://localhost:62127/api";
 
@@ -24,6 +25,7 @@ axios.interceptors.response.use(undefined, error => {
   if (status === 500) {
     toast.error("Server Error - check the console for more info!");
   }
+  throw error;
 });
 
 const responseBody = (response: AxiosResponse) => response.data;
@@ -42,6 +44,15 @@ const Foods = {
   update: (food: IFood) => requests.put(`/meals/${food.Id}`, food)
 };
 
+const FoodCategory = {
+  list: (): Promise<IFoodCategory[]> => requests.get("/mealcategory"),
+  details: (id: string) => requests.get(`/mealcategory/${id}`),
+  create: (category: IFoodCategory) => requests.post("/mealcategory", category),
+  update: (category: IFoodCategory) =>
+    requests.put(`/mealcategory/${category.Id}`, category)
+};
+
 export default {
-  Foods
+  Foods,
+  FoodCategory
 };

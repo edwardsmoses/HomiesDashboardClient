@@ -1,6 +1,8 @@
-import React, { useState, FormEvent, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Segment, Form, Button, Icon, Grid, Divider } from "semantic-ui-react";
-import { IFood } from "../../../app/modules/food";
+import { FormFormValues as FoodFormValues } from "../../../app/modules/food";
+
+import foodCategoryStore from "../../../app/stores/foodCategoryStore";
 
 import { v4 as uuid } from "uuid";
 
@@ -12,7 +14,35 @@ import { Form as FinalForm, Field } from "react-final-form";
 import TextInput from "../../../app/common/form/TextInput";
 import TextAreaInput from "../../../app/common/form/TextAreaInput";
 import SelectInput from "../../../app/common/form/SelectInput";
-import { category } from "../../../app/common/options/categoryOptions";
+import DateInput from "../../../app/common/form/DateInput";
+import { combineDateAndTime } from "../../../app/common/util/util";
+import {
+  combineValidators,
+  isRequired,
+  composeValidators,
+  hasLengthGreaterThan,
+  isNumeric
+} from "revalidate";
+import NumberInput from "../../../app/common/form/NumberInput";
+
+const validate = combineValidators({
+  Name: isRequired({ message: "The Meal Title is required." }),
+  CategoryId: isRequired({ message: "A Category is required to be selected." }),
+  Description: composeValidators(
+    isRequired("Description"),
+    hasLengthGreaterThan(4)({
+      message: "Description should be at least 5 characters"
+    })
+  )(),
+  Price: composeValidators(
+    isRequired({ message: "The Price for the meal is required." }),
+    isNumeric({ message: "Price must be a number" })
+  )(),
+  CreatedOn: isRequired({
+    message: "Enter the Date of Avaliablity of this Meal."
+  }),
+  time: isRequired({ message: "Enter the Time this meal will be available." })
+});
 
 interface DetailParams {
   id: string;
@@ -23,60 +53,54 @@ const FoodForm: React.FC<RouteComponentProps<DetailParams>> = ({
   history
 }) => {
   const foodStore = useContext(FoodStore);
-  const {
-    createMeal,
-    editMeal,
-    submitting,
-    mealDetail: initFood,
-    viewMealDetail,
-    clearMealDetail
-  } = foodStore;
 
-  const [food, setFood] = useState<IFood>({
-    Id: "",
-    Name: "",
-    CategoryName: "",
-    Description: "",
-    Price: 0,
-    PriceInCurrency: "",
-    PictureUrl: "",
-    FullPictureUrl: "",
-    Pictures: [],
-    Currency: ""
-  });
+  const categoryStore = useContext(foodCategoryStore);
+
+  useEffect(() => {}, [foodStore]);
+
+  const { createMeal, editMeal, submitting, viewMealDetail } = foodStore;
+
+  const {
+    categoriesSelectList,
+    loadCategories,
+    clearCategories
+  } = categoryStore;
+
+  const [food, setFood] = useState(new FoodFormValues());
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (match.params.id && food.Id.length === 0) {
-      viewMealDetail(match.params.id).then(() => {
-        initFood && setFood(initFood);
-      });
-    }
+    loadCategories();
 
     return () => {
-      clearMealDetail();
+      clearCategories();
     };
-  }, [
-    viewMealDetail,
-    clearMealDetail,
-    match.params.id,
-    initFood,
-    food.Id.length
-  ]);
+  }, [categoryStore, loadCategories, clearCategories]);
 
-  // const handleSubmit = () => {
-  //   if (food.Id.length === 0) {
-  //     let newFood = {
-  //       ...food,
-  //       Id: uuid()
-  //     };
-  //     createMeal(newFood).then(() => history.push(`/meals/${newFood.Id}`));
-  //   } else {
-  //     editMeal(food).then(() => history.push(`/meals/${food.Id}`));
-  //   }
-  // };
+  useEffect(() => {
+    if (match.params.id) {
+      setLoading(true);
+      viewMealDetail(match.params.id)
+        .then(meal => {
+          meal && setFood(new FoodFormValues(meal));
+        })
+        .finally(() => setLoading(false));
+    }
+  }, [viewMealDetail, match.params.id]);
 
   const handleFinalFormSubmit = (values: any) => {
-    console.log(values);
+    const dateAndTime = combineDateAndTime(values.CreatedOn, values.time);
+    const { CreatedOn, time, ...meal } = values;
+    meal.CreatedOn = dateAndTime;
+    if (!meal.Id) {
+      let newFood = {
+        ...meal,
+        Id: uuid()
+      };
+      createMeal(newFood);
+    } else {
+      editMeal(meal);
+    }
   };
 
   return (
@@ -84,25 +108,50 @@ const FoodForm: React.FC<RouteComponentProps<DetailParams>> = ({
       <Grid.Column width={10}>
         <Segment clearing>
           <FinalForm
+            validate={validate}
+            initialValues={food}
             onSubmit={handleFinalFormSubmit}
-            render={({ handleSubmit }) => (
-              <Form onSubmit={handleSubmit}>
+            render={({ handleSubmit, invalid, pristine }) => (
+              <Form onSubmit={handleSubmit} loading={loading}>
                 <Field
                   name="Name"
                   placeholder="Meal Name"
                   value={food.Name}
                   component={TextInput}
                 />
-                {/* only show category name when in create mode */}
-                {food.Id.length === 0 && (
+
+                <Field
+                  name="CategoryId"
+                  options={categoriesSelectList}
+                  placeholder="Category"
+                  value={food.CategoryName}
+                  component={SelectInput}
+                />
+
+                {/* only show date input when in create mode */}
+                {/* {food.Id.length === 0 && (
+                
+                )} */}
+
+                <Form.Group widths="equal">
                   <Field
-                    name="CategoryName"
-                    options={category}
-                    placeholder="Category"
-                    value={food.CategoryName}
-                    component={SelectInput}
+                    name="CreatedOn"
+                    type="datetime-local"
+                    placeholder="Date"
+                    component={DateInput}
+                    date={true}
+                    value={food.CreatedOn}
                   />
-                )}
+
+                  <Field
+                    name="time"
+                    type="datetime-local"
+                    placeholder="Time"
+                    time={true}
+                    component={DateInput}
+                    value={food.time}
+                  />
+                </Form.Group>
 
                 <Field
                   component={TextAreaInput}
@@ -116,7 +165,8 @@ const FoodForm: React.FC<RouteComponentProps<DetailParams>> = ({
                   name="Price"
                   placeholder="Price (in naira)"
                   value={food.Price}
-                  component="input"
+                  component={NumberInput}
+                  min="1"
                   type="number"
                 />
 
@@ -126,6 +176,7 @@ const FoodForm: React.FC<RouteComponentProps<DetailParams>> = ({
                   loading={submitting}
                   floated="right"
                   positive
+                  disabled={loading || invalid || pristine}
                   type="submit"
                   icon
                   labelPosition="right"
@@ -135,8 +186,13 @@ const FoodForm: React.FC<RouteComponentProps<DetailParams>> = ({
                 </Button>
                 <Button
                   floated="right"
-                  onClick={() => history.push("/meals")}
+                  onClick={
+                    food.Id
+                      ? () => history.push(`/meals/${food.Id}`)
+                      : () => history.push("/meals")
+                  }
                   type="button"
+                  disabled={loading}
                   content="Cancel"
                 />
               </Form>

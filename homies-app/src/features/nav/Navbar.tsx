@@ -17,6 +17,8 @@ const Navbar: React.FC = () => {
           Homies
         </Menu.Item>
         <Menu.Item name="Meals" as={NavLink} to="/meals" />
+        <Menu.Item name="Categories" as={NavLink} to="/categories" />
+
         <Menu.Item as={NavLink} to="/createMeal">
           <Button positive content="Create New Meal" />
         </Menu.Item>

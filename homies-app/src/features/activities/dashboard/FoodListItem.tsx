@@ -4,6 +4,8 @@ import { Button, Card, Icon, Label, Image } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import { IFood } from "../../../app/modules/food";
 
+import { format } from "date-fns";
+
 export const FoodListItem: React.FC<{ food: IFood }> = ({ food }) => {
   return (
     <Card>
@@ -22,6 +24,9 @@ export const FoodListItem: React.FC<{ food: IFood }> = ({ food }) => {
         <Card.Description>
           <Icon name="info circle"></Icon>
           {food.Description}
+          <br></br>
+          <Icon name="clock outline"></Icon>
+          {format(food.CreatedOn, "eeee do MMMM YYYY")}
         </Card.Description>
       </Card.Content>
       <Card.Content extra>

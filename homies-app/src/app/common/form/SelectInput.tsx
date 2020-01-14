@@ -21,7 +21,7 @@ const SelectInput: React.FC<IProps> = ({
         options={options}
       />
       {touched && error && (
-        <Label basic color="red">
+        <Label basic color="red" pointing>
           {error}
         </Label>
       )}

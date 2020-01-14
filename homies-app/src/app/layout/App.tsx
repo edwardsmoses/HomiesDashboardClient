@@ -17,6 +17,7 @@ import { homepage } from "../../features/home/homepage";
 import FoodForm from "../../features/activities/form/FoodForm";
 import FoodDetail from "../../features/activities/details/FoodDetail";
 import NotFound from "./NotFound";
+import CategoryDashboard from "../../features/categories/dashboard/CategoryDashboard";
 
 const App: React.FC<RouteComponentProps> = ({ location }) => {
   return (
@@ -32,6 +33,12 @@ const App: React.FC<RouteComponentProps> = ({ location }) => {
 
             <Container style={{ marginTop: "7em" }}>
               <Switch>
+                <Route
+                  path="/categories"
+                  exact
+                  component={CategoryDashboard}
+                ></Route>
+
                 <Route path="/meals" exact component={FoodDashboard}></Route>
                 <Route path="/meals/:id" exact component={FoodDetail}></Route>
 

@@ -2,6 +2,8 @@ import { observable, action, computed, configure, runInAction } from "mobx";
 import { createContext } from "react";
 import { IFood } from "../modules/food";
 import agent from "../api/agent";
+import { history } from "../..";
+import { toast } from "react-toastify";
 
 configure({ enforceActions: "always" });
 
@@ -49,6 +51,7 @@ export class FoodStore {
 
       runInAction("loading meals", () => {
         foods.forEach(meal => {
+          meal.CreatedOn = new Date(meal.CreatedOn);
           this.mealRegistry.set(meal.Id, meal);
         });
         this.loadingInitial = false;
@@ -67,6 +70,7 @@ export class FoodStore {
     let meal = this.getMeal(id);
     if (meal) {
       this.mealDetail = meal;
+      return meal;
     } else {
       this.loadingInitial = true;
 
@@ -75,9 +79,12 @@ export class FoodStore {
         meal = await agent.Foods.details(id);
 
         runInAction("mealDetail", () => {
+          meal.CreatedOn = new Date(meal.CreatedOn);
           this.mealDetail = meal;
+          this.mealRegistry.set(meal.Id, meal);
           this.loadingInitial = false;
         });
+        return meal;
       } catch (error) {
         runInAction("mealDetailError", () => {
           this.loadingInitial = false;
@@ -103,15 +110,17 @@ export class FoodStore {
       await agent.Foods.create(food);
 
       runInAction("create Meal", () => {
-        this.mealRegistry.set(food.Id, food);
+        //after saving, don't save to the Observable Map
+        // this.mealRegistry.set(food.Id, food);
         this.submitting = false;
       });
+      history.push(`/meals/${food.Id}`);
     } catch (error) {
       runInAction("create meal Error", () => {
         this.submitting = false;
       });
-
-      console.log(error);
+      toast.error("Problem creating New Meal");
+      console.log(error.response);
     }
   };
 
@@ -127,12 +136,13 @@ export class FoodStore {
 
         this.submitting = false;
       });
+      history.push(`/meals/${food.Id}`);
     } catch (error) {
-      console.log(error);
-
       runInAction("editing Meals Error", () => {
         this.submitting = false;
       });
+      toast.error("Problem saving Updates to Meal");
+      console.log(error.response);
     }
   };
 
