@@ -3,8 +3,20 @@ import { IFood } from "../modules/food";
 import { history } from "../..";
 import { toast } from "react-toastify";
 import { IFoodCategory } from "../modules/foodCategory";
+import { IUser, IUserFormValues } from "../modules/user";
 
 axios.defaults.baseURL = "http://localhost:62127/api";
+
+axios.interceptors.request.use(
+  config => {
+    const token = window.localStorage.getItem("jwt");
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
+  }
+);
 
 axios.interceptors.response.use(undefined, error => {
   if (error.message === "Network Error" && !error.response) {
@@ -25,7 +37,7 @@ axios.interceptors.response.use(undefined, error => {
   if (status === 500) {
     toast.error("Server Error - check the console for more info!");
   }
-  throw error;
+  throw error.response;
 });
 
 const responseBody = (response: AxiosResponse) => response.data;
@@ -44,6 +56,14 @@ const Foods = {
   update: (food: IFood) => requests.put(`/meals/${food.Id}`, food)
 };
 
+const User = {
+  current: (): Promise<IUser> => requests.get("/users/"),
+  login: (user: IUserFormValues): Promise<IUser> =>
+    requests.post(`/users/login`, user),
+  register: (user: IUserFormValues): Promise<IUser> =>
+    requests.post(`/users/register`, user)
+};
+
 const FoodCategory = {
   list: (): Promise<IFoodCategory[]> => requests.get("/mealcategory"),
   details: (id: string) => requests.get(`/mealcategory/${id}`),
@@ -54,5 +74,6 @@ const FoodCategory = {
 
 export default {
   Foods,
-  FoodCategory
+  FoodCategory,
+  User
 };

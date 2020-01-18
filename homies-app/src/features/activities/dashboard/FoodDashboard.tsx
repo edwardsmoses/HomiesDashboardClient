@@ -4,18 +4,19 @@ import { Grid } from "semantic-ui-react";
 import FoodList from "./FoodList";
 import { observer } from "mobx-react-lite";
 
-import FoodStore from "../../../app/stores/foodStore";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
+import { RootStoreContext } from "../../../app/stores/rootStore";
 
 const FoodDashboard: React.FC = () => {
-  const foodStore = useContext(FoodStore);
+  const rootStore = useContext(RootStoreContext);
+
+  const { loadMeals, loadingInitial } = rootStore.foodStore;
 
   useEffect(() => {
-    foodStore.loadMeals();
-  }, [foodStore]);
+    loadMeals();
+  }, [loadMeals]);
 
-  if (foodStore.loadingInitial)
-    return <LoadingComponent content="Loading Meals.." />;
+  if (loadingInitial) return <LoadingComponent content="Loading Meals.." />;
 
   return (
     <Grid>

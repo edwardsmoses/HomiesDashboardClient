@@ -1,7 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import { Grid } from "semantic-ui-react";
 
-import FoodStore from "../../../app/stores/foodStore";
 import { observer } from "mobx-react-lite";
 import { RouteComponentProps } from "react-router-dom";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
@@ -9,14 +8,19 @@ import FoodDetailedHeader from "./FoodDetailedHeader";
 import { FoodDetailedInfo } from "./FoodDetailedInfo";
 import { FoodDetailedPictures } from "./FoodDetailedPictures";
 import { FoodDetailedSidebar } from "./FoodDetailedSidebar";
+import { RootStoreContext } from "../../../app/stores/rootStore";
 
 interface DetailParams {
   id: string;
 }
 
 const FoodDetail: React.FC<RouteComponentProps<DetailParams>> = ({ match }) => {
-  const foodStore = useContext(FoodStore);
-  const { mealDetail: food, viewMealDetail, loadingInitial } = foodStore;
+  const rootStore = useContext(RootStoreContext);
+  const {
+    mealDetail: food,
+    viewMealDetail,
+    loadingInitial
+  } = rootStore.foodStore;
 
   useEffect(() => {
     viewMealDetail(match.params.id);

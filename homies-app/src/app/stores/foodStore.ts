@@ -1,13 +1,18 @@
-import { observable, action, computed, configure, runInAction } from "mobx";
-import { createContext } from "react";
+import { observable, action, computed, runInAction } from "mobx";
 import { IFood } from "../modules/food";
 import agent from "../api/agent";
 import { history } from "../..";
 import { toast } from "react-toastify";
 
-configure({ enforceActions: "always" });
+import { RootStore } from "./rootStore";
 
-export class FoodStore {
+export default class FoodStore {
+  rootStore: RootStore;
+
+  constructor(rootStore: RootStore) {
+    this.rootStore = rootStore;
+  }
+
   @observable mealRegistry = new Map();
 
   @observable mealDetail: IFood | null = null;
@@ -154,5 +159,3 @@ export class FoodStore {
     this.mealDetail = this.mealRegistry.get(id);
   };
 }
-
-export default createContext(new FoodStore());

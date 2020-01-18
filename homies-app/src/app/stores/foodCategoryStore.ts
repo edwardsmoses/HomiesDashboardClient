@@ -1,12 +1,18 @@
 import { observable, action, computed, configure, runInAction } from "mobx";
-import { createContext } from "react";
 import { IFoodCategory } from "../modules/foodCategory";
 import agent from "../api/agent";
 import { ISelect } from "../modules/ISelect";
+import { RootStore } from "./rootStore";
 
 configure({ enforceActions: "always" });
 
-export class categoriestore {
+export default class FoodCategoryStore {
+  rootStore: RootStore;
+
+  constructor(rootStore: RootStore) {
+    this.rootStore = rootStore;
+  }
+
   @observable categoryRegistry = new Map();
 
   @observable categoryDetail: IFoodCategory | null = null;
@@ -142,5 +148,3 @@ export class categoriestore {
     this.categoryDetail = this.categoryRegistry.get(id);
   };
 }
-
-export default createContext(new categoriestore());

@@ -2,11 +2,8 @@ import React, { useState, useContext, useEffect } from "react";
 import { Segment, Form, Button, Icon, Grid, Divider } from "semantic-ui-react";
 import { FormFormValues as FoodFormValues } from "../../../app/modules/food";
 
-import foodCategoryStore from "../../../app/stores/foodCategoryStore";
-
 import { v4 as uuid } from "uuid";
 
-import FoodStore from "../../../app/stores/foodStore";
 import { observer } from "mobx-react-lite";
 import { RouteComponentProps } from "react-router-dom";
 
@@ -24,6 +21,7 @@ import {
   isNumeric
 } from "revalidate";
 import NumberInput from "../../../app/common/form/NumberInput";
+import { RootStoreContext } from "../../../app/stores/rootStore";
 
 const validate = combineValidators({
   Name: isRequired({ message: "The Meal Title is required." }),
@@ -52,19 +50,20 @@ const FoodForm: React.FC<RouteComponentProps<DetailParams>> = ({
   match,
   history
 }) => {
-  const foodStore = useContext(FoodStore);
+  const rootStore = useContext(RootStoreContext);
 
-  const categoryStore = useContext(foodCategoryStore);
-
-  useEffect(() => {}, [foodStore]);
-
-  const { createMeal, editMeal, submitting, viewMealDetail } = foodStore;
+  const {
+    createMeal,
+    editMeal,
+    submitting,
+    viewMealDetail
+  } = rootStore.foodStore;
 
   const {
     categoriesSelectList,
     loadCategories,
     clearCategories
-  } = categoryStore;
+  } = rootStore.foodCategoryStore;
 
   const [food, setFood] = useState(new FoodFormValues());
   const [loading, setLoading] = useState(false);
@@ -75,7 +74,7 @@ const FoodForm: React.FC<RouteComponentProps<DetailParams>> = ({
     return () => {
       clearCategories();
     };
-  }, [categoryStore, loadCategories, clearCategories]);
+  }, [loadCategories, clearCategories]);
 
   useEffect(() => {
     if (match.params.id) {

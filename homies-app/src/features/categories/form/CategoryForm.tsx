@@ -2,7 +2,6 @@ import React, { useState, useContext } from "react";
 import { Segment, Form, Button, Header, Icon } from "semantic-ui-react";
 import { IFoodCategory } from "../../../app/modules/foodCategory";
 import { v4 as uuid } from "uuid";
-import foodCategoryStore from "../../../app/stores/foodCategoryStore";
 import { observer } from "mobx-react-lite";
 
 import { Form as FinalForm, Field } from "react-final-form";
@@ -10,14 +9,15 @@ import TextInput from "../../../app/common/form/TextInput";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 
 import { combineValidators, isRequired } from "revalidate";
+import { RootStoreContext } from "../../../app/stores/rootStore";
 
 const validate = combineValidators({
   Name: isRequired({ message: "The Category Name is required." })
 });
 
 const CategoryForm: React.FC<RouteComponentProps> = ({ history }) => {
-  const categoryStore = useContext(foodCategoryStore);
-  const { createcategory, submitting } = categoryStore;
+  const rootStore = useContext(RootStoreContext);
+  const { createcategory, submitting } = rootStore.foodCategoryStore;
   const initializeForm = () => {
     return {
       Id: "",

@@ -2,14 +2,15 @@ import React, { useContext, Fragment } from "react";
 
 import { observer } from "mobx-react-lite";
 
-import FoodStore from "../../../app/stores/foodStore";
 import { FoodListItem } from "./FoodListItem";
 
 import { Card, Divider, Header, Icon } from "semantic-ui-react";
+import { RootStoreContext } from "../../../app/stores/rootStore";
 
 const FoodList: React.FC = () => {
-  const foodStore = useContext(FoodStore);
-  const { mealsByCategory: foods } = foodStore;
+  const rootStore = useContext(RootStoreContext);
+
+  const { mealsByCategory: foods } = rootStore.foodStore;
 
   return (
     <Fragment>

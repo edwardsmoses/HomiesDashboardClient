@@ -3,17 +3,19 @@ import { Grid } from "semantic-ui-react";
 import CategoryList from "./CategoryList";
 import CategoryForm from "../form/CategoryForm";
 import { observer } from "mobx-react-lite";
-import foodCategoryStore from "../../../app/stores/foodCategoryStore";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
+import { RootStoreContext } from "../../../app/stores/rootStore";
 
 const CategoryDashboard: React.FC = () => {
-  const foodStore = useContext(foodCategoryStore);
+  const rootStore = useContext(RootStoreContext);
+
+  const { loadCategories, loadingInitial } = rootStore.foodCategoryStore;
 
   useEffect(() => {
-    foodStore.loadCategories();
-  }, [foodStore]);
+    loadCategories();
+  }, [loadCategories]);
 
-  if (foodStore.loadingInitial)
+  if (loadingInitial)
     return <LoadingComponent content="Loading Categories.." />;
 
   return (
